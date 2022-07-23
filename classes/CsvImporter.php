@@ -6,7 +6,7 @@ class CsvImporter {
     private $fh;
     // перемення для хранения значение второго аргумента
     private $header;
-    // перемення для хранения залоговка CVS-файла
+    // розделитель CVS-файла
     private $separator;
     // перемення для хранения значение третьего аргумента
     private $length;
@@ -36,9 +36,6 @@ class CsvImporter {
         if ($this->header) {
             $this->headerKeys = fgetcsv($this->fh, $this->length);
         }
-
-        
-
     }
 
     public function __destruct()

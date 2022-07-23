@@ -22,7 +22,6 @@ class Controller {
             $db->store($result, $_POST['fields']);
             header('Location: index.php');
         }
-        // print_r($_POST);
 
         $result = $this->objIm->get();
         echo $this->getContent('index', ['result' => $result, 'fields' => $this->fields]);

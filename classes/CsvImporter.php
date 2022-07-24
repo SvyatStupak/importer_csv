@@ -1,9 +1,7 @@
 <?php
 
-class CsvImporter {
-
-    // переменная для хранения дискриптор открытого CVS-файла
-    private $fh;
+class CsvImporter
+{
     // перемення для хранения значение второго аргумента
     private $header;
     // розделитель CVS-файла
@@ -13,11 +11,11 @@ class CsvImporter {
     // переменная для хранения массива сформированого из первой строки импортируемого файла
     private $headerKeys;
 
-        
+
+
     /**
      * __construct
      *
-     * @param  mixed $fileName - имя файла который будет обрабатывать
      * @param  mixed $header - необходимость обработки строки заголовков
      * @param  mixed $separator - розделитель в импортируемой таблице
      * @param  mixed $length - допустимая длина строки в символах импортируемого файла,
@@ -25,53 +23,63 @@ class CsvImporter {
      *               указанным в параметре 
      * @return void
      */
-    public function __construct($fileName, $header = false, $separator = ',', $length=8000)
+    public function __construct($header = false, $separator = ',', $length = 10000)
     {
-        $this->fh =fopen($fileName, 'r');
         $this->header = $header;
         $this->separator = $separator;
         $this->length = $length;
-
-        // прочитываем первую строку импортируемого файла
-        if ($this->header) {
-            $this->headerKeys = fgetcsv($this->fh, $this->length);
-        }
     }
 
-    public function __destruct()
-    {
-        if ($this->fh) {
-            fclose($this->fh);
-        }
-    }
-    
+
     /**
-     * get - метод возращает результат
+     * get - метод возращает массив значений в зависимости от значения $header
      *
      * @param  mixed $max - указывает количество читаемых строк из CSV-файла, 0 - прочитать весь файл
      * @return void
      */
-    public function get($max = 0) {
-        $data = [];
+    public function get($max = 0)
+    {
 
-        for ($line=0; $row = fgetcsv($this->fh, $this->length); $line++) { 
-            if ($this->header) {
-                foreach ($this->headerKeys as $key => $value) {
-                    $row1[$value] = $row[$key];
+        if (isset($_POST["Import"])) {
+
+            $filename = $_FILES["file"]["tmp_name"];
+            if ($_FILES["file"]["size"] > 0 AND $_FILES["file"]["size"] < 2000000) {
+                $file = fopen($filename, "r");
+
+                // прочитываем первую строку импортируемого файла (название стобцов)
+                if ($this->header) {
+                    $this->headerKeys = fgetcsv($file, $this->length);
                 }
-                $data[] = $row1;
+
+                $data = [];
+
+                for ($line = 0; $row = fgetcsv($file, $this->length); $line++) {
+                    // сохраняев в название столбца => значение
+                    if ($this->header) {
+                        foreach ($this->headerKeys as $key => $value) {
+                            $row1[$value] = $row[$key];
+                        }
+                        $data[] = $row1;
+                    } else {
+                        // сохраняем в обычный массив
+                        $data[] = $row;
+                    }
+
+                    
+                    if ($max > 0) {
+                        if ($max == $line) {
+                            break;
+                        }
+                    }
+                }
+
+                fclose($file);
+                return $data;
+
             } else {
-                $data[] = $row;
+                throw new \Exception("The file is empty or the size exceeds 2MB");
+                
             }
-
-            if ($max > 0) {
-                if($max == $line) {
-                    break;
-                }
-            }
-        }
-
-        return $data; 
+        } 
     }
-
 }

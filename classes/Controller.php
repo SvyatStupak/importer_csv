@@ -66,12 +66,10 @@ class Controller
         extract($vars);
 
         $url = $_SERVER['REQUEST_URI'];
-        if ($url === "/" || $url === '/index.php') {
-            require_once 'templates/index.php';
-        } else if ($url == '/show.php' || $url == '/show.php/') {
-            require_once 'templates/show.php';
-        } else {
-            throw new \Exception('Path not found ' . $_SERVER['REQUEST_URI']);
+
+        if (preg_match('#/([a-z0-9_-]+)#', $url, $params)) {
+            trim($url, '/');
+            require_once 'templates/' . $url;
         }
         
         return ob_get_clean();

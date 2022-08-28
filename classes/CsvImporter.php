@@ -62,7 +62,7 @@ class CsvImporter
                         $data[] = $row1;
                     } else {
                         // сохраняем в обычный массив
-                        $data[] = $row;
+                        if(isset($row[0])) $data[] = $row;
                     }
 
                     

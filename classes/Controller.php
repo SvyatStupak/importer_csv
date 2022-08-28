@@ -48,9 +48,9 @@ class Controller
                         </script>";
                 
             }
-            echo $this->getContent();
         }
-        echo $this->getContent();
+        $data = $this->objDB->getAll();
+        echo $this->getContent(compact('data'));
     }
 
     /**

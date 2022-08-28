@@ -19,6 +19,25 @@ class MyDB
         }
     }
 
+    public function getAll()
+    {
+        try {
+            $query = "SELECT * FROM users";
+            $result = $this->db->query($query);
+            if (!$result) {
+                throw new Exception("ERROR: " . $this->db->errno . '|' . $this->db->error);
+            }
+
+            $resultArr = [];
+            while ($row = mysqli_fetch_assoc($result)) {
+                $resultArr[] = $row;
+            }
+            return $resultArr;
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
     public function getNameColumns()
     {
         try {
@@ -46,15 +65,17 @@ class MyDB
             $columns .= '`' . $files . '`' . ',';
         }
         $columns = trim($columns, ',');
+
         if ($columns) {
             $str = '';
             foreach ($csv as $item) {
                 $r = '';
-                foreach ($item  as $key => $value) {
+                foreach ($item as $value) {
                     $r .= "'" . $this->db->real_escape_string($value) . "',";
                 }
                 $r = trim($r, ',');
-                if ($r) {
+
+                if (strlen($r) != 0) {
                     $str .= '(' . $r . '),';
                 }
             }
@@ -66,7 +87,7 @@ class MyDB
                 $query = "REPLACE INTO `users` (" . $columns . ") VALUES " . $str;
                 $result = $this->db->query($query);
                 if (!$result) {
-                    throw new Exception("ERROR: " . $this->db->errno . '|' . $this->db->error);
+                    throw new Exception("ERROR: " . $this->db->errno . ' | ' . $this->db->error);
                 }
                 echo "<script type=\"text/javascript\">
                         alert(\"CSV File has been successfully Imported.\");

@@ -54,10 +54,10 @@
         <div id="wrap">
             <div class="container">
                 <?php
-                $con = new mysqli(HOST, USER, PASSWORD, DB);
-                $Sql = "SELECT * FROM users";
-                $result = mysqli_query($con, $Sql);
-                if (mysqli_num_rows($result) > 0) {
+                // $con = new mysqli(HOST, USER, PASSWORD, DB);
+                // $Sql = "SELECT * FROM users";
+                // $result = mysqli_query($con, $Sql);
+                if (count($data) > 0) {
                     echo "<div class='table-responsive'><table id='myTable' class='table table-striped table-bordered'>
                                 <thead><tr><th>UID</th>
                                              <th>Name</th>
@@ -66,7 +66,7 @@
                                              <th>Phone</th>
                                              <th>Gender Date</th>
                                            </tr></thead><tbody>";
-                    while ($row = mysqli_fetch_assoc($result)) {
+                        foreach ($data as $row) {
                         echo "<tr><td>" . $row['UID'] . "</td>
                                       <td>" . $row['Name'] . "</td>
                                       <td>" . $row['Age'] . "</td>
